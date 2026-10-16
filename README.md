@@ -11,7 +11,20 @@ The standard version includes most common chart styles:
 
 Tested with R 4.6.1
 
-Install:
+Install and Test:
+
+Use RGui or RStudio, set your default workspace or folder to this repository:
+
+```
+> setwd("/github/R")
+
+Package R6 is necessary.
+
+Run a simple example to show a chart:
+
+> source("demos/simple.R")
+```
+
 
 
 
