@@ -10,7 +10,7 @@ TeeChart <- R6::R6Class(
     y = NULL,
     texts = NULL,
 
-    initialize = function(x, y, texts = NULL) {
+    initialize = function(x = NULL, y, texts = NULL) {
       self$x <- as.numeric(x)
       self$y <- as.numeric(y)
       self$texts <- as.character(texts)

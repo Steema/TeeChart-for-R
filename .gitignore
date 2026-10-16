@@ -1,3 +1,5 @@
 *.dcu
 R/__history/
 src/dll/__history/
+__history/
+*.local

@@ -32,13 +32,21 @@ type
 
   TStringArray = Array of String;
 
-function Rf_length(x: SEXP): Integer; stdcall; external 'R.dll';
-function REAL(x: SEXP): PDoubleArray; stdcall; external 'R.dll';
+  TRf_allocVector = function(stype: Integer; n: Integer): SEXP; stdcall;
+  TRf_length = function(x: SEXP): Integer; stdcall;
+  TR_CHAR = function(x: SEXP): PAnsiChar; stdcall;
+  TSTRING_ELT = function(x: SEXP; i: Integer): SEXP; stdcall;
+  TREAL = function(x: SEXP): PDoubleArray; stdcall;
+  TRAW = function(x: SEXP): PByte; stdcall;
 
-function Rf_allocVector(stype: SEXPTYPE; n: Integer): Pointer; stdcall; external 'R.dll';
-function RAW(x: SEXP): PByte; stdcall; external 'R.dll';
-function STRING_ELT(x: SEXP; i: Integer): SEXP; stdcall; external 'R.dll';
-function R_CHAR(x: SEXP): PAnsiChar; stdcall; external 'R.dll';
+var
+  Rf_allocVector: TRf_allocVector = nil;
+  Rf_length: TRf_length = nil;
+  R_CHAR: TR_CHAR = nil;
+  STRING_ELT: TSTRING_ELT = nil;
+  REAL : TREAL = nil;
+  RAW : TRAW = nil;
+  R_NilValue : Pointer = nil;
 
 function CreateImage(const APanel:TCustomTeePanel; const AFormat:TTeeExportFormatClass):SEXP;
 var memStream : TMemoryStream;
@@ -129,26 +137,6 @@ begin
   end;
 end;
 
-var
-  R_NilValue: Pointer = nil;
-
-procedure InitRNilValue;
-var
-  hR: HMODULE;
-  p: ^Pointer;
-begin
-  if R_NilValue = nil then
-  begin
-    hR := GetModuleHandle('R.dll');
-    if hR <> 0 then
-    begin
-      p := GetProcAddress(hR, 'R_NilValue');
-      if p <> nil then
-        R_NilValue := p^;
-    end;
-  end;
-end;
-
 function RealsFrom(n,data:SEXP):TDoubleArray;
 var t, tmp : Integer;
     c : PDoubleArray;
@@ -175,17 +163,47 @@ begin
   end;
 end;
 
+var
+  R_DllHandle: HMODULE = 0;
+
+function InitRAPI: Boolean;
+begin
+  if R_DllHandle = 0 then
+  begin
+    R_DllHandle := GetModuleHandle('R.dll');
+
+    if R_DllHandle = 0 then
+       R_DllHandle := LoadLibrary('R.dll');
+
+    if R_DllHandle <> 0 then
+    begin
+      @Rf_allocVector := GetProcAddress(R_DllHandle, 'Rf_allocVector');
+      @Rf_length := GetProcAddress(R_DllHandle, 'Rf_length');
+      @R_CHAR := GetProcAddress(R_DllHandle,'R_CHAR');
+      @STRING_ELT := GetProcAddress(R_DllHandle, 'STRING_ELT');
+      @REAL := GetProcAddress(R_DllHandle, 'REAL');
+      @RAW := GetProcAddress(R_DllHandle, 'RAW');
+      R_NilValue := GetProcAddress(R_DllHandle, 'R_NilValue');
+    end;
+  end;
+
+  Result := (R_DllHandle <> 0) and Assigned(Rf_allocVector);
+end;
+
 function TeeChartRender(nx_ptr, x_ptr,
                         ny_ptr, y_ptr,
                         ntexts_ptr, texts_ptr,
                         output_type_ptr,
-                        width_ptr, height_ptr: SEXP): SEXP; stdcall;
+                        width_ptr, height_ptr: SEXP): SEXP; stdcall; export;
 var
   outputTypeStr: string;
   cStr: PAnsiChar;
   tmpChart : TChart;
   width, height : Integer;
 begin
+  if not InitRAPI then
+     raise Exception.Create('Error. Cannot locate and initialize R.dll');
+
   width := PInteger(width_ptr)^;
   height := PInteger(height_ptr)^;
 
@@ -212,6 +230,12 @@ begin
   end;
 end;
 
+procedure R_init_teechart(DllInfo: Pointer); cdecl; export;
 begin
-  InitRNilValue;
+end;
+
+exports
+  TeeChartRender,
+  R_init_teechart;
+
 end.
