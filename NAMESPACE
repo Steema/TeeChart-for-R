@@ -1,1 +1,3 @@
+useDynLib(teechart)
+useDynLib(teechart, .registration = TRUE)
 
