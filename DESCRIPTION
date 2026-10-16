@@ -1,0 +1,15 @@
+Package: teechart
+Type: Package
+Title: TeeChart Charting Library for R
+Version: 0.9.0
+Authors@R: person("david", "berneda", email = "david@steema.com", role = c("aut", "cre"))
+Maintainer: Steema Support support.steema.com
+Description: Create charts and plots using TeeChart in your R projects.
+License: MIT
+Encoding: UTF-8
+LazyData: true
+Imports: 
+    graphics,
+    utils
+Suggests: 
+RoxygenNote: 7.3.1
