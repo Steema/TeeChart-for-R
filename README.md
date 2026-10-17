@@ -30,6 +30,9 @@ chart$show()
 
 <img width="1195" height="1590" alt="image" src="https://github.com/user-attachments/assets/236ee942-d8ca-4d0f-af95-ea04f5e0b028" />
 
+## Same demo in R Studio ide:
+
+<img width="777" height="530" alt="image" src="https://github.com/user-attachments/assets/a19ad190-1f87-4950-9430-8147959d76af" />
 
 ## A pro version (not yet available) provides extended support with many more styles and functionality like 3D charts:
 
