@@ -3,3 +3,7 @@ R/__history/
 src/dll/__history/
 __history/
 *.local
+.RData
+.Rhistory
+Delphi/dll/Win32/Debug/teechart.dll
+*.rsm

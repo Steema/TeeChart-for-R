@@ -10,6 +10,7 @@ Encoding: UTF-8
 LazyData: true
 Imports: 
     graphics,
-    utils
+    utils,
+    R6
 Suggests: 
 Config/roxygen2/version: 8.1.1

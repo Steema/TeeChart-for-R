@@ -2,6 +2,7 @@
 NULL
 
 #' R6 class
+#  @importFrom R6 R6Class
 #' @export
 TeeChart <- R6::R6Class(
   "TeeChart",
@@ -11,12 +12,24 @@ TeeChart <- R6::R6Class(
     texts = NULL,
 
     initialize = function(x = NULL, y, texts = NULL) {
-      self$x <- as.numeric(x)
+
+      if (is.null(x)) {
+         self$x <- numeric(0)
+      } else {
+         self$x <- as.numeric(x)
+      }
+
       self$y <- as.numeric(y)
-      self$texts <- as.character(texts)
+
+      if (is.null(texts)) {
+         self$texts <- rep("", length(self$y))
+      } else {
+         self$texts <- as.character(texts)
+      }
+
     },
 
-    render = function(output_type = "png", width = 800, height = 600) {
+    render = function(output_type = "form", width = 800, height = 600) {
 
       # output_type "png" or "jpeg" or "jpg" or "form"
       res <- .C("TeeChartRender",
@@ -52,5 +65,6 @@ plot.TeeChart <- function(x, y, ...) {
 
 #' @export
 print.TeeChart <- function(x, ...) {
+  cat("<TeeChart> with", length(x$y), "points\n")
   invisible(x)
 }

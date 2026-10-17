@@ -2,19 +2,19 @@ library teechart;
 
 uses
   Windows,
-
   TeeProcs,
   TeEngine,
   Chart,
   Series,
-
   TeeExport,
-  TeePNG, TeeJPEG,
-
+  TeePNG,
+  TeeJPEG,
+  Math,
   System.SysUtils,
   System.Classes,
   VCL.Controls,
-  VCL.Forms;
+  VCL.Forms,
+  TeeChart_GDIPlus in 'TeeChart_GDIPlus.pas';
 
 {$R *.res}
 
@@ -35,16 +35,12 @@ type
   TRf_allocVector = function(stype: Integer; n: Integer): SEXP; stdcall;
   TRf_length = function(x: SEXP): Integer; stdcall;
   TR_CHAR = function(x: SEXP): PAnsiChar; stdcall;
-  TSTRING_ELT = function(x: SEXP; i: Integer): SEXP; stdcall;
-  TREAL = function(x: SEXP): PDoubleArray; stdcall;
   TRAW = function(x: SEXP): PByte; stdcall;
 
 var
   Rf_allocVector: TRf_allocVector = nil;
   Rf_length: TRf_length = nil;
   R_CHAR: TR_CHAR = nil;
-  STRING_ELT: TSTRING_ELT = nil;
-  REAL : TREAL = nil;
   RAW : TRAW = nil;
   R_NilValue : Pointer = nil;
 
@@ -103,7 +99,11 @@ begin
     if nY>25 then
        tmp:=TLineSeries.Create(result)
     else
-       tmp:=TBarSeries.Create(result);
+    begin
+      tmp:=TBarSeries.Create(result);
+      tmp.Marks.Style:=smsValue;
+      tmp.ColorEachPoint:=True;
+    end;
 
     result.AddSeries(tmp);
 
@@ -137,30 +137,36 @@ begin
   end;
 end;
 
-function RealsFrom(n,data:SEXP):TDoubleArray;
-var t, tmp : Integer;
-    c : PDoubleArray;
+function RealsFrom(n: PInteger; data: PDouble): TDoubleArray;
 begin
-  tmp:=PInteger(n)^;
-  SetLength(result, tmp);
-  c := REAL(data);
+  SetLength(Result, n^);
 
-  for t:=0 to tmp-1 do
-      result[t] := c^[t];
+  if n^ > 0 then
+     Move(data^, Result[0], n^ * SizeOf(Double));
 end;
 
-function TextsFrom(n,data:SEXP):TStringArray;
-var t, tmp : Integer;
-    sElem: SEXP;
+function TextsFrom(n: PInteger; data: PPAnsiChar): TStringArray;
+var
+  t: Integer;
+  p: PAnsiChar;
 begin
-  tmp:=PInteger(n)^;
-  SetLength(result, tmp);
-
-  for t:=0 to tmp-1 do
+  SetLength(Result, n^);
+  for t := 0 to n^ - 1 do
   begin
-    sElem := STRING_ELT(data, t);
-    result[t] := UTF8ToString(R_CHAR(sElem));
+    p := PPAnsiChar(PByte(data) + t * SizeOf(Pointer))^;   // data[t]
+    if p = nil then
+      Result[t] := ''
+    else
+      Result[t] := UTF8ToString(RawByteString(p));
   end;
+end;
+
+function StringFrom(data: PPAnsiChar): string;
+begin
+  if (data = nil) or (data^ = nil) then
+    Result := ''
+  else
+    Result := UTF8ToString(RawByteString(data^));
 end;
 
 var
@@ -180,8 +186,6 @@ begin
       @Rf_allocVector := GetProcAddress(R_DllHandle, 'Rf_allocVector');
       @Rf_length := GetProcAddress(R_DllHandle, 'Rf_length');
       @R_CHAR := GetProcAddress(R_DllHandle,'R_CHAR');
-      @STRING_ELT := GetProcAddress(R_DllHandle, 'STRING_ELT');
-      @REAL := GetProcAddress(R_DllHandle, 'REAL');
       @RAW := GetProcAddress(R_DllHandle, 'RAW');
       R_NilValue := GetProcAddress(R_DllHandle, 'R_NilValue');
     end;
@@ -190,19 +194,20 @@ begin
   Result := (R_DllHandle <> 0) and Assigned(Rf_allocVector);
 end;
 
-function TeeChartRender(nx_ptr, x_ptr,
-                        ny_ptr, y_ptr,
-                        ntexts_ptr, texts_ptr,
-                        output_type_ptr,
+function TeeChartRender(nx_ptr:PInteger; x_ptr:PDouble;
+                        ny_ptr:PInteger; y_ptr:PDouble;
+                        ntexts_ptr:PInteger; texts_ptr:PPAnsiChar;
+                        output_type_ptr:PPAnsiChar;
                         width_ptr, height_ptr: SEXP): SEXP; stdcall; export;
 var
   outputTypeStr: string;
-  cStr: PAnsiChar;
   tmpChart : TChart;
   width, height : Integer;
 begin
   if not InitRAPI then
      raise Exception.Create('Error. Cannot locate and initialize R.dll');
+
+  SetExceptionMask(exAllArithmeticExceptions);
 
   width := PInteger(width_ptr)^;
   height := PInteger(height_ptr)^;
@@ -212,8 +217,7 @@ begin
                         TextsFrom(ntexts_ptr,texts_ptr),
                         Width,Height);
   try
-    cStr := R_CHAR(STRING_ELT(output_type_ptr, 0));
-    outputTypeStr := UTF8ToString(cStr);
+    outputTypeStr := StringFrom(output_type_ptr);
 
     if SameText(outputTypeStr,'png') then
        result:=CreateImage(tmpChart,TPNGExportFormat)
@@ -223,8 +227,10 @@ begin
     else
     begin
       ShowForm(tmpChart);
+      tmpChart:=nil; // <-- already freed above
       result := R_NilValue;
     end;
+
   finally
     tmpChart.Free;
   end;
