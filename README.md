@@ -13,7 +13,7 @@ Tested with [R 4.6.1](https://www.r-project.org/)
 
 Use R console, RGui or [RStudio ide](https://posit.co/downloads), set your default workspace or folder to this repository on your local machine, and run R:
 
-```
+```R
 > library("teechart")
 
 Run a simple example to show a chart:
@@ -29,6 +29,17 @@ chart$show()
 ```
 
 <img width="1195" height="1590" alt="image" src="https://github.com/user-attachments/assets/236ee942-d8ca-4d0f-af95-ea04f5e0b028" />
+
+## Infinite cosmetic configuration (fonts, colors, 2D or 3D etc)
+
+```R
+data <- mtcars
+data$names <- rownames(data)
+
+chart <- TeeChart$new(data = data, x = data$hp, y = data$qsec, texts = data$names)
+chart$set_title("Engine Performance")$show()
+```
+<img width="1056" height="1225" alt="image" src="https://github.com/user-attachments/assets/19fb2301-6a90-4d55-bd85-00bcc089ed11" />
 
 ## Same demo in R Studio ide:
 
