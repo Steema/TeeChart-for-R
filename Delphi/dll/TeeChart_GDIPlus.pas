@@ -1,3 +1,8 @@
+{*********************************************}
+{  TeeChart for R                             }
+{  Copyright (c) 2026 by Steema Software      }
+{  All Rights Reserved                        }
+{*********************************************}
 unit TeeChart_GDIPlus;
 
 interface

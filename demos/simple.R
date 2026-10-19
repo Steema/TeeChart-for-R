@@ -1,3 +1,4 @@
+library("teechart")
 dyn.load("inst/libs/x64/teechart.dll")
 
 data <- c(10, 25, 15, 30, 22)

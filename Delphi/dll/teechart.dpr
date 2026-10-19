@@ -1,48 +1,32 @@
+{*********************************************}
+{  TeeChart for R                             }
+{  Copyright (c) 2026 by Steema Software      }
+{  All Rights Reserved                        }
+{*********************************************}
 library teechart;
 
 uses
-  Windows,
   TeeProcs,
   TeEngine,
   Chart,
   Series,
+
   TeeExport,
   TeePNG,
   TeeJPEG,
+
+  TeeTools,
+
   Math,
   System.SysUtils,
   System.Classes,
   VCL.Controls,
   VCL.Forms,
-  TeeChart_GDIPlus in 'TeeChart_GDIPlus.pas';
+
+  TeeChart_GDIPlus in 'TeeChart_GDIPlus.pas',
+  Tee.R in 'Tee.R.pas';
 
 {$R *.res}
-
-const
-  REALSXP = 14;
-  STRSXP = 16;
-  RAWSXP = 24;
-
-type
-  SEXPTYPE = Integer;
-  SEXP= ^SEXPTYPE;
-
-  PDoubleArray = ^TDoubleArray;
-  TDoubleArray = Array of Double;
-
-  TStringArray = Array of String;
-
-  TRf_allocVector = function(stype: Integer; n: Integer): SEXP; stdcall;
-  TRf_length = function(x: SEXP): Integer; stdcall;
-  TR_CHAR = function(x: SEXP): PAnsiChar; stdcall;
-  TRAW = function(x: SEXP): PByte; stdcall;
-
-var
-  Rf_allocVector: TRf_allocVector = nil;
-  Rf_length: TRf_length = nil;
-  R_CHAR: TR_CHAR = nil;
-  RAW : TRAW = nil;
-  R_NilValue : Pointer = nil;
 
 function CreateImage(const APanel:TCustomTeePanel; const AFormat:TTeeExportFormatClass):SEXP;
 var memStream : TMemoryStream;
@@ -79,6 +63,8 @@ var t, nY, nX, nTexts : Integer;
 begin
   result:=TChart.Create(nil);
 
+  result.View3D:=False;
+
   if AWidth<>0 then
      result.Width:=AWidth;
 
@@ -91,7 +77,11 @@ begin
   if nY>0 then
   begin
     if nX>0 then
-       tmp:=TPointSeries.Create(result)
+    begin
+      tmp:=TPointSeries.Create(result);
+      tmp.XValues.Order:=loNone;
+      result.Axes.Bottom.Texts.Style:=talValue;
+    end
     else
     if nY>200 then
        tmp:=TFastLineSeries.Create(result)
@@ -122,6 +112,7 @@ begin
     end;
   end;
 
+  result.Tools.Add(TMarksTipTool.Create(result));
 end;
 
 procedure ShowForm(const AChart:TChart);
@@ -129,6 +120,8 @@ var tmp : TForm;
 begin
   tmp:=TForm.Create(nil);
   try
+    tmp.Caption:='TeeChart for R - www.steema.com';
+
     AChart.Align:=alClient;
     AChart.Parent:=tmp;
     tmp.ShowModal;
@@ -169,36 +162,13 @@ begin
     Result := UTF8ToString(RawByteString(data^));
 end;
 
-var
-  R_DllHandle: HMODULE = 0;
-
-function InitRAPI: Boolean;
-begin
-  if R_DllHandle = 0 then
-  begin
-    R_DllHandle := GetModuleHandle('R.dll');
-
-    if R_DllHandle = 0 then
-       R_DllHandle := LoadLibrary('R.dll');
-
-    if R_DllHandle <> 0 then
-    begin
-      @Rf_allocVector := GetProcAddress(R_DllHandle, 'Rf_allocVector');
-      @Rf_length := GetProcAddress(R_DllHandle, 'Rf_length');
-      @R_CHAR := GetProcAddress(R_DllHandle,'R_CHAR');
-      @RAW := GetProcAddress(R_DllHandle, 'RAW');
-      R_NilValue := GetProcAddress(R_DllHandle, 'R_NilValue');
-    end;
-  end;
-
-  Result := (R_DllHandle <> 0) and Assigned(Rf_allocVector);
-end;
-
 function TeeChartRender(nx_ptr:PInteger; x_ptr:PDouble;
                         ny_ptr:PInteger; y_ptr:PDouble;
                         ntexts_ptr:PInteger; texts_ptr:PPAnsiChar;
                         output_type_ptr:PPAnsiChar;
-                        width_ptr, height_ptr: SEXP): SEXP; stdcall; export;
+                        width_ptr, height_ptr: SEXP;
+                        title_ptr, footer_ptr:PPAnsiChar
+                        ): SEXP; stdcall; export;
 var
   outputTypeStr: string;
   tmpChart : TChart;
@@ -218,6 +188,9 @@ begin
                         Width,Height);
   try
     outputTypeStr := StringFrom(output_type_ptr);
+
+    tmpChart.Title.Text.Text := StringFrom(title_ptr);
+    tmpChart.Foot.Text.Text := StringFrom(footer_ptr);
 
     if SameText(outputTypeStr,'png') then
        result:=CreateImage(tmpChart,TPNGExportFormat)
