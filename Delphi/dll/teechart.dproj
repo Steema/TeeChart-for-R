@@ -213,6 +213,7 @@
         </DelphiCompile>
         <DCCReference Include="TeeChart_GDIPlus.pas"/>
         <DCCReference Include="Tee.R.pas"/>
+        <DCCReference Include="Tee.Styles.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

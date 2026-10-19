@@ -15,6 +15,9 @@ TeeChart <- R6::R6Class(
     title = "",
     footer = "",
     color = "",
+    style = "",
+    horiz = FALSE,
+    commander = FALSE,
 
     initialize = function(x = NULL, y, z = NULL, texts = NULL, data = NULL, ...) {
 
@@ -50,23 +53,27 @@ TeeChart <- R6::R6Class(
       if (!is.null(args$title)) self$title <- args$title
       if (!is.null(args$footer)) self$footer <- args$footer
       if (!is.null(args$color)) self$color <- args$color
+      if (!is.null(args$style)) self$style <- args$style
+      if (!is.null(args$horiz)) self$horiz <- args$horizontal
+      if (!is.null(args$commander)) self$commander <- args$commander
      },
 
      render = function(output_type = "form", width = 800, height = 600) {
 
       # output_type "png" or "jpeg" or "jpg" or "form"
       res <- .C("TeeChartRender",
-                as.integer(length(self$x)),
-                as.double(self$x),
-                as.integer(length(self$y)),
-                as.double(self$y),
-                as.integer(length(self$texts)),
-                as.character(self$texts),
+                as.integer(length(self$x)),   as.double(self$x),
+                as.integer(length(self$y)),   as.double(self$y),
+                as.integer(length(self$z)),   as.double(self$z),
+                as.integer(length(self$texts)),  as.character(self$texts),
                 as.character(output_type),
                 as.integer(width),
                 as.integer(height),
+                as.character(self$style),
                 as.character(self$title),
                 as.character(self$footer),
+                as.logical(self$horiz),
+                as.logical(self$commander),
                 PACKAGE = "teechart"
       )
 

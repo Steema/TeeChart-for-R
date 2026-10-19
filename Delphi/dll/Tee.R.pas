@@ -35,10 +35,52 @@ var
 
 function InitRAPI: Boolean;
 
+function BoolFrom(n: PInteger): Boolean; inline;
+function RealsFrom(n: PInteger; data: PDouble): TDoubleArray;
+function StringFrom(data: PPAnsiChar): string;
+function TextsFrom(n: PInteger; data: PPAnsiChar): TStringArray;
+
 implementation
 
 uses
   Windows;
+
+function BoolFrom(n: PInteger): Boolean; inline;
+begin
+  result:=n^ <> 0;
+end;
+
+function RealsFrom(n: PInteger; data: PDouble): TDoubleArray;
+begin
+  SetLength(Result, n^);
+
+  if n^ > 0 then
+     Move(data^, Result[0], n^ * SizeOf(Double));
+end;
+
+function TextsFrom(n: PInteger; data: PPAnsiChar): TStringArray;
+var
+  t: Integer;
+  p: PAnsiChar;
+begin
+  SetLength(Result, n^);
+  for t := 0 to n^ - 1 do
+  begin
+    p := PPAnsiChar(PByte(data) + t * SizeOf(Pointer))^;   // data[t]
+    if p = nil then
+      Result[t] := ''
+    else
+      Result[t] := UTF8ToString(RawByteString(p));
+  end;
+end;
+
+function StringFrom(data: PPAnsiChar): string;
+begin
+  if (data = nil) or (data^ = nil) then
+    Result := ''
+  else
+    Result := UTF8ToString(RawByteString(data^));
+end;
 
 var
   R_DllHandle: HMODULE = 0;
