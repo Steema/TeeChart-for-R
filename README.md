@@ -41,7 +41,23 @@ chart$set_title("Engine Performance")$show()
 ```
 <img width="1056" height="1225" alt="image" src="https://github.com/user-attachments/assets/19fb2301-6a90-4d55-bd85-00bcc089ed11" />
 
-## Same demo in R Studio ide:
+## XYZ 3D with optional OpenGL GPU live charts
+
+```R
+x <- seq(-3, 3, length.out = 30)
+y <- seq(-3, 3, length.out = 30)
+
+xyz <- expand.grid(x = x, y = y)
+xyz$z <- sin(sqrt(xyz$x^2 + xyz$y^2))
+
+chart <- TeeChart$new(x = x, y = y, z = xyz$z, commander = TRUE)
+chart$set_title("XYZ 3D Surface")$show()
+```
+
+<img width="940" height="710" alt="image" src="https://github.com/user-attachments/assets/07834c29-60d9-4e2f-8321-c6caa98a9599" />
+
+
+## Same demos in R Studio ide:
 
 <img width="777" height="530" alt="image" src="https://github.com/user-attachments/assets/a19ad190-1f87-4950-9430-8147959d76af" />
 
