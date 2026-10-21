@@ -56,6 +56,10 @@ chart$set_title("XYZ 3D Surface")$show()
 
 <img width="940" height="710" alt="image" src="https://github.com/user-attachments/assets/07834c29-60d9-4e2f-8321-c6caa98a9599" />
 
+## Fast OpenGL 3D rotation, zoom
+
+https://github.com/user-attachments/assets/f14a2b28-9186-4447-91dc-730b351a0418
+
 
 ## Same demos in R Studio ide:
 
