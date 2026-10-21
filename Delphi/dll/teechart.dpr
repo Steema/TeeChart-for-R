@@ -11,6 +11,7 @@ uses
   Chart,
   Series,
   TeeExport,
+  TeeGLCanvas,
   TeePNG,
   TeeJPEG,
   TeeTools,
@@ -221,7 +222,9 @@ function TeeChartRender(nx_ptr:PInteger; x_ptr:PDouble;
                         output_type_ptr:PPAnsiChar;
                         width_ptr, height_ptr: SEXP;
                         style_ptr, title_ptr, footer_ptr:PPAnsiChar;
-                        isHoriz_ptr, commander_ptr :PInteger
+                        isHoriz_ptr,
+                        commander_ptr,
+                        opengl_ptr :PInteger
                         ): SEXP; stdcall; export;
 var
   outputTypeStr: string;
@@ -248,6 +251,16 @@ begin
 
     tmpChart.Title.Text.Text := StringFrom(title_ptr);
     tmpChart.Foot.Text.Text := StringFrom(footer_ptr);
+
+    if BoolFrom(opengl_ptr) then
+    begin
+      tmpChart.Canvas:=TGLCanvas.Create;
+
+      tmpChart.Walls.Left.Transparent:=True;
+      tmpChart.Walls.Bottom.Transparent:=True;
+
+      tmpChart.ZoomWheel:=pmwNormal;
+    end;
 
     if SameText(outputTypeStr,'png') then
        result:=CreateImage(tmpChart,TPNGExportFormat)

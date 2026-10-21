@@ -7,3 +7,4 @@ __history/
 .Rhistory
 Delphi/dll/Win32/Debug/teechart.dll
 *.rsm
+demos/__recovery/

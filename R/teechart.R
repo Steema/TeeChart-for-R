@@ -18,10 +18,13 @@ TeeChart <- R6::R6Class(
     style = "",
     horiz = FALSE,
     commander = FALSE,
+    opengl = FALSE,
 
     initialize = function(x = NULL, y, z = NULL, texts = NULL, data = NULL, ...) {
 
      if (!is.null(data)) {
+         self$data <- data
+
          if (!missing(x)) self$x <- eval(substitute(x), data, parent.frame())
          if (!missing(y)) self$y <- eval(substitute(y), data, parent.frame())
          if (!missing(z)) self$z <- eval(substitute(z), data, parent.frame())
@@ -74,14 +77,20 @@ TeeChart <- R6::R6Class(
                 as.character(self$footer),
                 as.logical(self$horiz),
                 as.logical(self$commander),
+                as.logical(self$opengl),
                 PACKAGE = "teechart"
       )
 
       invisible(res)
     },
 
-    show = function() {
+    show = function(modal = TRUE) {
       self$render(output_type = "form")
+    },
+
+    set_opengl = function(enabled = TRUE) {
+      self$opengl <- enabled
+      invisible(self)
     },
 
     set_title = function(new_title) {
