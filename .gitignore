@@ -13,3 +13,6 @@ Delphi/dll/__recovery/
 .Rproj.user
 Delphi/dll/Linux64/Release/
 __recovery/
+inst/doc
+/doc/
+/Meta/

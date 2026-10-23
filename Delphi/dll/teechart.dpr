@@ -18,7 +18,7 @@ uses
   FMXTee.Chart,
   FMX.Platform,
   {$ELSE}
-  VCLTee.Chart,
+  VCLTee.Chart, VCLTee.TeePNG, VCLTee.TeeJPEG,
   {$ENDIF }
   Math,
   System.SysUtils,
