@@ -4,12 +4,11 @@
 
 TeeChart for R is a free package that uses the [TeeChart library](https://www.steema.com/).
 
-The standard version includes most common chart styles:
+The standard version includes most common chart styles, in 2D or 3D:
 
 <img width="455" height="400" alt="image" src="https://github.com/user-attachments/assets/d7b3ae17-0038-4409-a564-de3a5caa0ed9" />
 
-
-Tested with [R 4.6.1](https://www.r-project.org/)
+## Tested with [R 4.6.1](https://www.r-project.org/) and RStudio in Windows and Ubuntu Linux.
 
 Use R console, RGui or [RStudio ide](https://posit.co/downloads), set your default workspace or folder to this repository on your local machine, and run R:
 
@@ -70,6 +69,11 @@ https://github.com/user-attachments/assets/f14a2b28-9186-4447-91dc-730b351a0418
 <img width="978" height="621" alt="image" src="https://github.com/user-attachments/assets/03258950-cae9-467c-b587-2f16b44b3cdc" />
 
 <img width="1263" height="1148" alt="image" src="https://github.com/user-attachments/assets/2f1431d1-d8b0-49b0-8fad-cc68c73333b2" />
+
+
+## Same TeeChart for R package running in RStudio Ubuntu Linux:
+
+<img width="1460" height="1080" alt="image" src="https://github.com/user-attachments/assets/7e1b1c3c-4c9a-4306-858e-d35eda776376" />
 
 
 
