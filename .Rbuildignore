@@ -1,0 +1,12 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^__recovery$
+^Delphi/dll/Linux64$
+^Delphi/dll/Win32$
+^Delphi/dll/Win64$
+^Delphi/dll/__history$
+^Delphi/dll/__recovery$
+^Delphi/dll/teechart\.dproj\.local$
+^.*\.rsm
+
+

@@ -1,5 +1,4 @@
 library("teechart")
-dyn.load("inst/libs/x64/teechart.dll")
 
 x <- seq(-3, 3, length.out = 30)
 y <- seq(-3, 3, length.out = 30)

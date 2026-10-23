@@ -43,7 +43,12 @@ function TextsFrom(n: PInteger; data: PPAnsiChar): TStringArray;
 implementation
 
 uses
-  Windows;
+  {$IFDEF MSWINDOWS}
+  Windows
+  {$ELSE}
+  Posix.Dlfcn
+  {$ENDIF}
+  ;
 
 function BoolFrom(n: PInteger): Boolean; inline;
 begin
@@ -82,6 +87,21 @@ begin
     Result := UTF8ToString(RawByteString(data^));
 end;
 
+{$IFNDEF MSWINDOWS}
+function GetModuleHandle(const Lib:MarshaledAString):HMODULE;
+begin
+  result:=dlopen(Lib,RTLD_LAZY);
+end;
+
+function GetProcAddress(const Lib:HMODULE; const Name:MarshaledAString):Pointer;
+begin
+  result:=dlsym(Lib,Name);
+end;
+{$ENDIF}
+
+const
+  RLib = {$IFDEF MSWINDOWS}'R.dll'{$ELSE}'libR.so'{$ENDIF};
+
 var
   R_DllHandle: HMODULE = 0;
 
@@ -89,10 +109,12 @@ function InitRAPI: Boolean;
 begin
   if R_DllHandle = 0 then
   begin
-    R_DllHandle := GetModuleHandle('R.dll');
+    R_DllHandle := GetModuleHandle(RLib);
 
+    {$IFDEF MSWINDOWS}
     if R_DllHandle = 0 then
-       R_DllHandle := LoadLibrary('R.dll');
+       R_DllHandle := LoadLibrary(RLib);
+    {$ENDIF}
 
     if R_DllHandle <> 0 then
     begin

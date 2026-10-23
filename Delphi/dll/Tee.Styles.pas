@@ -1,8 +1,44 @@
 unit Tee.Styles;
 
+{$IFNDEF MSWINDOWS}
+{$DEFINE FMX}
+{$ENDIF}
+
 interface
 
 uses
+  {$IFDEF FMX}
+  FMXTee.Engine,
+  FMXTee.Series,
+  FMXTee.Series.Arrow,
+  FMXTee.Series.BoxPlot,
+  FMXTee.Series.Bubble,
+  FMXTee.Series.Candle,
+  FMXTee.Series.Donut,
+  FMXTee.Series.Error,
+  FMXTee.Series.ErrorPoint,
+  FMXTee.Functions.Stats,
+  FMXTee.Series.Funnel,
+  FMXTee.Series.Gantt,
+  FMXTee.Series.HighLowLine,
+  FMXTee.Series.Kagi,
+  FMXTee.Series.OHLC,
+  FMXTee.Series.Point3D,
+  FMXTee.Series.Polar,
+  FMXTee.Series.PolarContour,
+  FMXTee.Series.PolarGrid,
+  FMXTee.Series.Renko,
+  FMXTee.Series.Rose,
+  FMXTee.Series.Smith,
+  FMXTee.Series.SquarifiedMap,
+  FMXTee.Series.Sankey,
+  FMXTee.Series.Slope,
+  FMXTee.Series.Surface,
+  FMXTee.Series.Ternary,
+  FMXTee.Series.Tornado,
+  FMXTee.Series.TreeMap,
+  FMXTee.Series.TriSurface
+  {$ELSE}
   TeEngine,
 
   ArrowCha,
@@ -36,13 +72,14 @@ uses
   TeePolarContour,
   TeePolarGrid,
   TeeRose,
-  TeeTriSurface;
+  TeeTriSurface
+  {$ENDIF};
 
 type
   TStyle=record Name:String; Series:TChartSeriesClass; end;
 
 const
-  Styles:Array[0..50] of TStyle=(
+  Styles:Array[0..{$IFDEF FMX}49{$ELSE}50{$ENDIF}] of TStyle=(
      (Name:'Area';        Series:TAreaSeries),
      (Name:'Arrow';       Series:TArrowSeries),
      (Name:'Bar';         Series:TBarSeries),
@@ -56,7 +93,9 @@ const
      (Name:'Contour';     Series:TContourSeries),
      (Name:'Darvas';      Series:TDarvasSeries),
      (Name:'Donut';       Series:TDonutSeries),
+     {$IFNDEF FMX}
      (Name:'EquiVolume';  Series:TEquiVolumeSeries),
+     {$ENDIF}
      (Name:'Error';       Series:TErrorSeries),
      (Name:'Error3D';     Series:TErrorPoint3DSeries),
      (Name:'ErrorBar';    Series:TErrorBarSeries),
@@ -125,7 +164,6 @@ const
    );
 
 function StyleFrom(const S:String):TChartSeriesClass;
-function FixHorizontal(const AClass:TChartSeriesClass; Horiz:Boolean):TChartSeriesClass;
 
 implementation
 
@@ -146,29 +184,4 @@ begin
   result:=nil;
 end;
 
-function FixHorizontal(const AClass:TChartSeriesClass; Horiz:Boolean):TChartSeriesClass;
-begin
-  result:=AClass;
-
-  if Horiz then
-  begin
-    if result=TLineSeries then result:=THorizLineSeries else
-    if result=TBarSeries then result:=THorizBarSeries else
-    if result=TAreaSeries then result:=THorizAreaSeries else
-    if result=THistogramSeries then result:=THorizHistogramSeries else
-    if result=TBoxSeries then result:=THorizBoxSeries else
-    if result=TViolinSeries then result:=THorizViolinSeries else
-    if result=TBeeSwarmSeries then result:=THorizBeeSwarmSeries;
-  end
-  else
-  begin
-    if result=THorizLineSeries then result:=TLineSeries else
-    if result=THorizBarSeries then result:=TBarSeries else
-    if result=THorizAreaSeries then result:=TAreaSeries else
-    if result=THorizHistogramSeries then result:=THistogramSeries else
-    if result=THorizBoxSeries then result:=TBoxSeries else
-    if result=THorizViolinSeries then result:=TViolinSeries else
-    if result=THorizBeeSwarmSeries then result:=TBeeSwarmSeries;
-  end;
-end;
 end.

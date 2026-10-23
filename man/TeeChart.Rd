@@ -12,6 +12,10 @@ R6 class
     \item \href{#method-TeeChart-initialize}{\code{TeeChart$new()}}
     \item \href{#method-TeeChart-render}{\code{TeeChart$render()}}
     \item \href{#method-TeeChart-show}{\code{TeeChart$show()}}
+    \item \href{#method-TeeChart-set_opengl}{\code{TeeChart$set_opengl()}}
+    \item \href{#method-TeeChart-set_title}{\code{TeeChart$set_title()}}
+    \item \href{#method-TeeChart-set_footer}{\code{TeeChart$set_footer()}}
+    \item \href{#method-TeeChart-set_color}{\code{TeeChart$set_color()}}
     \item \href{#method-TeeChart-clone}{\code{TeeChart$clone()}}
   }
 }
@@ -21,7 +25,7 @@ R6 class
 \subsection{\code{TeeChart$new()}}{
   \subsection{Usage}{
     \if{html}{\out{<div class="r">}}
-    \preformatted{TeeChart$new(x = NULL, y, texts = NULL)}
+    \preformatted{TeeChart$new(x = NULL, y, z = NULL, texts = NULL, data = NULL, ...)}
     \if{html}{\out{</div>}}
   }
 }
@@ -32,7 +36,7 @@ R6 class
 \subsection{\code{TeeChart$render()}}{
   \subsection{Usage}{
     \if{html}{\out{<div class="r">}}
-    \preformatted{TeeChart$render(output_type = "png", width = 800, height = 600)}
+    \preformatted{TeeChart$render(output_type = "form", width = 800, height = 600)}
     \if{html}{\out{</div>}}
   }
 }
@@ -43,7 +47,51 @@ R6 class
 \subsection{\code{TeeChart$show()}}{
   \subsection{Usage}{
     \if{html}{\out{<div class="r">}}
-    \preformatted{TeeChart$show()}
+    \preformatted{TeeChart$show(modal = TRUE)}
+    \if{html}{\out{</div>}}
+  }
+}
+
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-TeeChart-set_opengl"></a>}}
+\if{latex}{\out{\hypertarget{method-TeeChart-set_opengl}{}}}
+\subsection{\code{TeeChart$set_opengl()}}{
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{TeeChart$set_opengl(enabled = TRUE)}
+    \if{html}{\out{</div>}}
+  }
+}
+
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-TeeChart-set_title"></a>}}
+\if{latex}{\out{\hypertarget{method-TeeChart-set_title}{}}}
+\subsection{\code{TeeChart$set_title()}}{
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{TeeChart$set_title(new_title)}
+    \if{html}{\out{</div>}}
+  }
+}
+
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-TeeChart-set_footer"></a>}}
+\if{latex}{\out{\hypertarget{method-TeeChart-set_footer}{}}}
+\subsection{\code{TeeChart$set_footer()}}{
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{TeeChart$set_footer(new_footer)}
+    \if{html}{\out{</div>}}
+  }
+}
+
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-TeeChart-set_color"></a>}}
+\if{latex}{\out{\hypertarget{method-TeeChart-set_color}{}}}
+\subsection{\code{TeeChart$set_color()}}{
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{TeeChart$set_color(new_color)}
     \if{html}{\out{</div>}}
   }
 }

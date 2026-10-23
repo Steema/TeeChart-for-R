@@ -1,4 +1,4 @@
-#' @useDynLib teechart, .registration = TRUE
+#' @useDynLib teechart
 NULL
 
 #' R6 class
@@ -19,6 +19,7 @@ TeeChart <- R6::R6Class(
     horiz = FALSE,
     commander = FALSE,
     opengl = FALSE,
+    png = NULL,
 
     initialize = function(x = NULL, y, z = NULL, texts = NULL, data = NULL, ...) {
 
@@ -63,12 +64,13 @@ TeeChart <- R6::R6Class(
 
      render = function(output_type = "form", width = 800, height = 600) {
 
-      # output_type "png" or "jpeg" or "jpg" or "form"
+      # output_type "png" or "jpeg" or "jpg" or "form" (modal) or "window" (non-modal)
       res <- .C("TeeChartRender",
                 as.integer(length(self$x)),   as.double(self$x),
                 as.integer(length(self$y)),   as.double(self$y),
                 as.integer(length(self$z)),   as.double(self$z),
                 as.integer(length(self$texts)),  as.character(self$texts),
+
                 as.character(output_type),
                 as.integer(width),
                 as.integer(height),
@@ -81,11 +83,23 @@ TeeChart <- R6::R6Class(
                 PACKAGE = "teechart"
       )
 
+      if (output_type == "png") {
+        b <- .C("TeeChartGetBytes",
+           buf = raw(res$size),
+           n   = as.integer(res$size),
+           PACKAGE = "teechart")
+
+        self$png <- b$buf
+      }
+
       invisible(res)
     },
 
     show = function(modal = TRUE) {
-      self$render(output_type = "form")
+      if (modal)
+         self$render(output_type = "form")
+      else
+         self$render(output_type = "window")
     },
 
     set_opengl = function(enabled = TRUE) {
@@ -111,16 +125,17 @@ TeeChart <- R6::R6Class(
 )
 
 #' @export
-plot.TeeChart <- function(x, y, ...) {
+plot.TeeChart <- function(chart, ...) {
   # Use R grid or graphics to paint the png
-  png_data <- x$render(output_type = "png", ...)
+  png_data <- chart$render(output_type = "png", ...)
 
   grid::grid.raster(png_data)
-  invisible(x)
+  invisible(chart)
 }
 
 #' @export
-print.TeeChart <- function(x, ...) {
-  cat("<TeeChart> with", length(x$y), "points\n")
-  invisible(x)
+print.TeeChart <- function(chart, ...) {
+  cat("<TeeChart> with", length(chart$y), "points\n")
+  invisible(chart)
 }
+

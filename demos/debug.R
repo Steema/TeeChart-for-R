@@ -1,4 +1,6 @@
-dyn.load("inst/libs/x64/teechart.dll")
+library(teechart)
+
+# dyn.load("inst/libs/x64/teechart.dll")
 
 is.loaded("TeeChartRender")
 

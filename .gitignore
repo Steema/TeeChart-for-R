@@ -8,3 +8,8 @@ __history/
 Delphi/dll/Win32/Debug/teechart.dll
 *.rsm
 demos/__recovery/
+Delphi/dll/Linux64/Debug/
+Delphi/dll/__recovery/
+.Rproj.user
+Delphi/dll/Linux64/Release/
+__recovery/

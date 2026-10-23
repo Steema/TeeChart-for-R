@@ -1,5 +1,4 @@
 library("teechart")
-dyn.load("inst/libs/x64/teechart.dll")
 
 x <- seq(-3, 3, length.out = 30)
 y <- seq(-3, 3, length.out = 30)
@@ -8,6 +7,10 @@ xyz <- expand.grid(x = x, y = y)
 xyz$z <- sin(sqrt(xyz$x^2 + xyz$y^2))
 
 chart <- TeeChart$new(x = x, y = y, z = xyz$z, commander = TRUE)
+
 chart$set_opengl()
-chart$set_title("OpenGL XYZ 3D")$show()
+
+chart$set_title("OpenGL XYZ 3D")
+
+chart$show()
 

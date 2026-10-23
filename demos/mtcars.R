@@ -1,5 +1,5 @@
 library("teechart")
-dyn.load("inst/libs/x64/teechart.dll")
+# dyn.load("inst/libs/x64/teechart.dll")
 
 data <- mtcars
 data$names <- rownames(data)
